@@ -1,0 +1,208 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <link rel="stylesheet" href="/layui-master/src/css/layui.css">
+    <script src="/layui-master/src/layui.js"></script>
+    <title>Crud</title>
+</head>
+<body>
+    <div>
+        <form class="layui-form" method="get">
+            <div class="layui-form-item">
+                <label class="layui-form-label">用户名</label>
+                <div class="layui-input-inline">
+                    <input class="layui-input" type="text" name="name" placeholder="请输入用户名关键字.">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">年龄</label>
+                <div class="layui-input-inline">
+                    <input class="layui-input" type="number" name="minAge" placeholder="最小年龄（包含）">
+                </div>
+                <div class="layui-form-mid">-</div>
+                <div class="layui-input-inline">
+                    <input class="layui-input" type="number" name="maxAge" placeholder="最大年龄（包含）">
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">籍贯</label>
+                <div class="layui-input-inline">
+                    <select class="layui-form-select" name="nativePlace" lay-search>
+                        <option value="0">请选择户籍所在地.</option>
+                        <option value="1">北京市</option>
+                        <option value="2">上海市</option>
+                        <option value="3">重庆市</option>
+                        <option value="4">天津市</option>
+                        <option value="5">香港</option>
+                        <option value="6">澳门</option>
+                        <option value="7">河北省</option>
+                        <option value="8">山西省</option>
+                        <option value="9">辽宁省</option>
+                        <option value="10">吉林省</option>
+                        <option value="11">黑龙江省</option>
+                        <option value="12">江苏省</option>
+                        <option value="13">浙江省</option>
+                        <option value="14">安徽省</option>
+                        <option value="15">福建省</option>
+                        <option value="16">江西省</option>
+                        <option value="17">山东省</option>
+                        <option value="18">河南省</option>
+                        <option value="19">湖北省</option>
+                        <option value="20">湖南省</option>
+                        <option value="21">广东省</option>
+                        <option value="22">海南省</option>
+                        <option value="23">四川省</option>
+                        <option value="24">贵州省</option>
+                        <option value="25">云南省</option>
+                        <option value="26">陕西省</option>
+                        <option value="27">甘肃省</option>
+                        <option value="28">青海省</option>
+                        <option value="29">台湾省</option>
+                        <option value="30">广西壮族自治区</option>
+                        <option value="31">宁夏回族自治区</option>
+                        <option value="32">内蒙古自治区</option>
+                        <option value="33">新疆维吾尔自治区</option>
+                        <option value="34">西藏自治区</option>
+                    </select>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <label class="layui-form-label">性别</label>
+                <div class="layui-input-inline">
+                    <select class="layui-form-select" name="sex">
+                        <option value="0">不限</option>
+                        <option value="1">男</option>
+                        <option value="2">女</option>
+                    </select>
+                </div>
+            </div>
+            <div class="layui-form-item">
+                <div class="layui-input-block">
+                    <input type="reset" class="layui-btn layui-btn-primary">
+                    <button type="submit" class="layui-btn" lay-submit lay-filter="search"><i
+                            class="layui-icon layui-icon-search"></i></button>
+                </div>
+            </div>
+        </form>
+        <table id="table" lay-filter="tab-tool"></table>
+    </div>
+    <script id="toolbar" type="text/html">
+        <div>
+            <button class="layui-btn layui-btn-normal" lay-event="add">添加</button>
+            <button class="layui-btn layui-btn-danger" lay-event="delete">删除</button>
+        </div>
+    </script>
+    <script id="tool" type="text/html">
+        <div>
+            <button class="layui-btn layui-btn-normal layui-btn-sm" lay-event="edit">编辑</button>
+            <button class="layui-btn layui-btn-danger layui-btn-sm" lay-event="delete">删除</button>
+        </div>
+    </script>
+    <script id="form" type="text/html">
+        <div class="layui-card">
+            <div class="layui-card-body">
+                <form class="layui-form" lay-filter="form">
+                    <input type="hidden" name="id">
+                    <div class="layui-upload layui-form-item">
+                        <label class="layui-form-label">头像</label>
+                        <div class="layui-input-block">
+                            <button type="button" class="layui-btn" id="upload"><i class="layui-icon layui-icon-upload" ></i>上传头像</button>
+                            <input type="hidden" name="headerImg" id="headerPath">
+                            <button type="button" class="layui-btn" id="affirm"><i class="layui-icon layui-icon-ok"></i>确认上传</button>
+                            当前头像：<img width="36px" height="36px" class="layui-upload-img" id="headerPreview"/>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">用户名</label>
+                        <div class="layui-input-block">
+                            <input type="text" class="layui-input" name="name" placeholder="请填写用户名." lay-verify="required|username">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">年龄</label>
+                        <div class="layui-input-block">
+                            <input class="layui-input" type="number" name="age" lay-verify="required|age">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">籍贯</label>
+                        <div class="layui-input-block">
+                            <select class="layui-form-select" name="nativePlace" lay-search >
+                                <option value="0" >请选择户籍所在地.</option>
+                                <option value="1" >北京市</option>
+                                <option value="2" >上海市</option>
+                                <option value="3" >重庆市</option>
+                                <option value="4" >天津市</option>
+                                <option value="5" >香港</option>
+                                <option value="6" >澳门</option>
+                                <option value="7" >河北省</option>
+                                <option value="8" >山西省</option>
+                                <option value="9" >辽宁省</option>
+                                <option value="10" >吉林省</option>
+                                <option value="11" >黑龙江省</option>
+                                <option value="12" >江苏省</option>
+                                <option value="13" >浙江省</option>
+                                <option value="14" >安徽省</option>
+                                <option value="15" >福建省</option>
+                                <option value="16" >江西省</option>
+                                <option value="17" >山东省</option>
+                                <option value="18" >河南省</option>
+                                <option value="19" >湖北省</option>
+                                <option value="20" >湖南省</option>
+                                <option value="21" >广东省</option>
+                                <option value="22" >海南省</option>
+                                <option value="23" >四川省</option>
+                                <option value="24" >贵州省</option>
+                                <option value="25" >云南省</option>
+                                <option value="26" >陕西省</option>
+                                <option value="27" >甘肃省</option>
+                                <option value="28" >青海省</option>
+                                <option value="29" >台湾省</option>
+                                <option value="30" >广西壮族自治区</option>
+                                <option value="31" >宁夏回族自治区</option>
+                                <option value="32" >内蒙古自治区</option>
+                                <option value="33" >新疆维吾尔自治区</option>
+                                <option value="34" >西藏自治区</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">性别</label>
+                        <div class="layui-input-block">
+                            <select class="layui-form-select" name="sex">
+                                <option value="1">男</option>
+                                <option value="2">女</option>
+                            </select>
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">生日</label>
+                        <div class="layui-input-block">
+                            <input class="layui-input birthDay" type="text" name="birthDay" autocomplete="off" lay-verify="required|date">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <label class="layui-form-label">爱好</label>
+                        <div class="layui-input-block">
+                            <input type="checkbox" name="hobby" value="篮球" title="篮球">
+                            <input type="checkbox" name="hobby" value="足球" title="足球">
+                            <input type="checkbox" name="hobby" value="羽毛球" title="羽毛球">
+                            <input type="checkbox" name="hobby" value="乒乓球" title="乒乓球">
+                        </div>
+                    </div>
+                    <div class="layui-form-item">
+                        <div class="layui-input-block">
+                            <input class="layui-btn layui-btn-primary" type="reset">
+                            <input class="layui-btn layui-btn-normal" type="submit" lay-submit lay-filter="form" id="submitBtn" >
+                        </div>
+                    </div>
+                </form>
+            </div>
+        </div>
+    </script>
+    <script src="/js/crud.js"></script>
+</body>
+</html>

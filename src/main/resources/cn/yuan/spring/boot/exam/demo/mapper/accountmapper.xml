@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.yuan.spring.boot.exam.demo.mapper.AccountMapper">
+
+    <sql id="delete">
+        <foreach collection="ids" item="id" open="(" close=")" separator=",">
+            #{id}
+        </foreach>
+    </sql>
+
+    <sql id="select">
+        <where>
+        <if test="name != null and name != ''">AND name LIKE CONCAT('%',#{name},'%')</if>
+        <choose>
+            <when test="minAge != null and minAge != ''">
+                <choose>
+                    <when test="maxAge != null and maxAge != ''">
+                        AND age BETWEEN #{minAge} AND #{maxAge}
+                    </when>
+                    <otherwise>
+                        AND age &gt;= #{minAge}
+                    </otherwise>
+                </choose>
+            </when>
+            <when test="maxAge != null and maxAge != ''">
+                AND age &lt;= #{maxAge}
+            </when>
+        </choose>
+        <if test="nativePlace != null and nativePlace != '' and nativePlace != 0">AND native_place = #{nativePlace}</if>
+        <if test="sex != null and sex != '' and sex != 0">AND sex = #{sex}</if>
+        </where>
+    </sql>
+
+    <resultMap id="hobbies" type="cn.yuan.spring.boot.exam.demo.model.Account">
+        <id property="id" column="id"/>
+        <result property="headerImg" column="header_img"/>
+        <result property="name" column="name"/>
+        <result property="nativePlace" column="native_place"/>
+        <result property="age" column="age"/>
+        <result property="sex" column="sex"/>
+        <result property="birthDay" column="birthDay"/>
+        <collection property="hobby" ofType="string">
+            <result column="hobby"/>
+        </collection>
+    </resultMap>
+
+    <insert id="addAccount" useGeneratedKeys="true" keyProperty="id">
+        INSERT INTO account(header_img,name,native_place,age,sex,birthDay)VALUES(#{headerImg},#{name},#{nativePlace},#{age},#{sex},#{birthDay})
+    </insert>
+
+    <insert id="addHobby">
+        INSERT INTO account_hobby(account_id,hobby)VALUES
+        <foreach collection="hobbies" item="hobby" open="(" close=")" separator="),(">
+            #{hobby.accountId},#{hobby.hobby}
+        </foreach>
+    </insert>
+
+    <delete id="deleteAccount">
+        DELETE FROM account WHERE id IN<include refid="delete"/>
+    </delete>
+
+    <delete id="deleteHobby">
+        DELETE FROM account_hobby WHERE account_id IN<include refid="delete"/>
+    </delete>
+
+    <update id="updateAccount">
+        UPDATE account
+        <set>
+            <if test="headerImg != null and headerImg != ''">header_img = #{headerImg},</if>
+            <if test="name != null">name = #{name},</if>
+            <if test="nativePlace != null">native_place = #{nativePlace},</if>
+            <if test="age != null">age = #{age},</if>
+            <if test="sex != null">sex = #{sex},</if>
+            <if test="birthDay != null">birthDay = #{birthDay}</if>
+        </set>
+        WHERE id = #{id}
+    </update>
+
+    <select id="searchAll" resultMap="hobbies">
+        SELECT a.id,a.header_img,a.name,a.native_place,a.age,a.sex,a.birthDay,GROUP_CONCAT(b.hobby) hobby FROM account a LEFT JOIN account_hobby b ON a.id = b.account_id
+        <include refid="select"/> GROUP BY(a.id) LIMIT #{row},#{pageSize}
+    </select>
+
+    <select id="getAccount" resultMap="hobbies">
+        SELECT a.id,a.header_img,a.name,a.native_place,a.age,a.sex,a.birthDay,GROUP_CONCAT(b.hobby) hobby FROM account a LEFT JOIN account_hobby b ON a.id = b.account_id
+        WHERE a.id = #{id} GROUP BY(a.id)
+    </select>
+
+    <select id="count" resultType="integer">
+        SELECT COUNT(*) FROM account <include refid="select"/>
+    </select>
+
+</mapper>
